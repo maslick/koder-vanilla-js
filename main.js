@@ -47,17 +47,14 @@ if (navigator.serviceWorker) {
 
 function initWorker() {
   worker = new Worker("wasmWorker.js");
-  worker.onmessage = (ev) => terminateWorker(ev, "");
+  worker.onmessage = (ev) => terminateWorker(ev.data.data, ev.data.ms);
 }
 
-const terminateWorker = (ev, prefix) => {
-  if (ev.data != null) {
-    worker.terminate();
-    const result = ev.data;
-    beep();
-    stopVideo();
-    showCode(prefix + result.data);
-  }
+const terminateWorker = (data, millis) => {
+  worker.terminate();
+  beep();
+  stopVideo();
+  showCode(data, millis);
 };
 
 ////////////////
@@ -77,6 +74,7 @@ const container = document.getElementById("canvas");
 const btnStart = document.getElementById("btnStart");
 const btnStop = document.getElementById("btnStop");
 const barcodeEl = document.getElementById("result");
+const millisEl = document.getElementById("time");
 
 function init() {
   showElement(btnStart);
@@ -187,7 +185,8 @@ function showCanvas() {
   container.hidden = false;
 }
 
-function showCode(qr) {
+function showCode(qr, ms) {
   barcodeEl.style.display = "flex";
   barcodeEl.innerText = qr;
+  millisEl.innerHTML = `<div>Scanned in ${ms} ms</div>`;
 }

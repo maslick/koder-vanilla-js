@@ -1,10 +1,10 @@
-importScripts("wasm/zbar.js");
-importScripts("wasm/koder.js");
+importScripts("./node_modules/@maslick/koder/zbar.js");
+importScripts("./node_modules/@maslick/koder/browser.js");
 
 
 (async () => {
   // Initialize Koder
-  const koder = await new Koder().initialized;
+  const koder = await new Koder().initialize({wasmDirectory: "./node_modules/@maslick/koder"});
 
   // Listen for messages from JS main thread containing raw image data
   self.addEventListener('message', event => {
@@ -19,11 +19,11 @@ importScripts("wasm/koder.js");
     const t0 = new Date().getTime();
     const scanResult = koder.decode(data, this.width, this.height);
     const t1 = new Date().getTime();
-    if (scanResult.length) {
-      console.log(`Scanned in ${t1-t0} ms`);
+    if (scanResult) {
+      console.log(`Scanned in ${t1 - t0} ms`);
       postMessage({
-        data: scanResult[scanResult.length - 1],
-        ms: t1-t0
+        data: scanResult,
+        ms: t1 - t0
       });
     }
   });

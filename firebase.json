@@ -1,0 +1,14 @@
+{
+  "hosting": [{
+    "public": ".",
+    "target": "koder-browser",
+    "ignore": [
+      "firebase.json",
+      "**/.*"
+    ],
+    "rewrites": [{
+      "source": "**",
+      "destination": "/index.html"
+    }]
+  }]
+}

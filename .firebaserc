@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "qr-code-2fddd"
+  },
+  "targets": {
+    "qr-code-2fddd": {
+      "hosting": {
+        "koder-browser": [
+          "koder-browser"
+        ]
+      }
+    }
+  }
+}

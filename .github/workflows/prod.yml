@@ -1,0 +1,48 @@
+name: prod
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    name: Publish to Firebase
+    runs-on: ubuntu-latest
+    environment:
+      name: prod
+      url: https://koder-browser.web.app
+    steps:
+      - name: checkout source code
+        uses: actions/checkout@v2
+      - name: install node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: install dependencies
+        run: npm ci
+      - name: push to Firebase
+        uses: w9jds/firebase-action@v2.0.0
+        with:
+          args: deploy --only hosting:koder-browser
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      - name: send Telegram success message
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            Success!
+            A ${{ github.event_name }} event triggered the pipeline.
+            Ref: ${{ github.ref }}
+            Commit hash: ${{ github.sha }}
+            See https://github.com/maslick/koder-vanilla-js/actions for more details
+      - name: job failed
+        if: failure()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            Oops! Build failed (build job) :(
+            See https://github.com/maslick/koder-vanilla-js/actions for more details
